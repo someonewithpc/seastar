@@ -19,7 +19,8 @@
  * Copyright (C) 2015 Cloudius Systems, Ltd.
  */
 
-#include <fmt/time.h>
+// #include <fmt/time.h>
+#include <fmt/chrono.h>
 
 #include <seastar/util/log.hh>
 #include <seastar/util/log-cli.hh>

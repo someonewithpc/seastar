@@ -116,11 +116,17 @@ arch_packages=(
     lz4
     make
     protobuf
-    systemtap
     libtool
     cmake
     yaml-cpp
     stow
+    fmt
+)
+
+arch_aur_packages=(
+    systemtap
+    c-ares
+    dpdk
 )
 
 opensuse_packages=(
@@ -168,6 +174,9 @@ elif [ "$ID" = "centos" ] || [ "$ID" = "fedora" ]; then
     fi
 elif [ "$ID" = "arch" -o "$ID_LIKE" = "arch" ]; then
     pacman -Sy --needed "${arch_packages[@]}"
+    echo "Enter a command for installing packages from the AUR (e.g. 'pikaur'): "
+    read cmd
+    $cmd -Sy --needed "${arch_aur_packages[@]}"
 elif [ "$ID" = "opensuse-leap" ]; then
     zypper install -y "${opensuse_packages[@]}"
 else
