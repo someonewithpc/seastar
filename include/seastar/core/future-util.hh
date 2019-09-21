@@ -29,6 +29,7 @@
 #include <seastar/core/shared_ptr.hh>
 #include <seastar/core/do_with.hh>
 #include <seastar/core/timer.hh>
+#include <seastar/core/apply.hh>
 #include <seastar/util/bool_class.hh>
 #include <tuple>
 #include <iterator>
@@ -903,6 +904,12 @@ inline auto when_all(FutOrFuncs&&... fut_or_funcs) {
     return when_all_impl(futurize_apply_if_func(std::forward<FutOrFuncs>(fut_or_funcs))...);
 }
 
+template <typename... FutOrFuncs, typename Future>
+inline auto operator>>(std::tuple<FutOrFuncs...>&& tup, Future&& future) {
+    return seastar::apply(when_all, std::forward<std::tuple<FutOrFuncs...>>(tup))
+            .then(std::forward<Future>(future));
+}
+
 /// \cond internal
 namespace internal {
 
@@ -1374,6 +1381,12 @@ inline auto when_all_succeed_impl(Futures&&... futures) {
 template <typename... FutOrFuncs>
 inline auto when_all_succeed(FutOrFuncs&&... fut_or_funcs) {
     return when_all_succeed_impl(futurize_apply_if_func(std::forward<FutOrFuncs>(fut_or_funcs))...);
+}
+
+template <typename... FutOrFuncs, typename Future>
+inline auto operator>>=(std::tuple<FutOrFuncs...>&& tup, Future&& future) {
+        return seastar::apply(when_all_succeed<FutOrFuncs...>, std::forward<std::tuple<FutOrFuncs...>>(tup))
+                .then(std::forward<Future>(future));
 }
 
 /// Wait for many futures to complete (iterator version).

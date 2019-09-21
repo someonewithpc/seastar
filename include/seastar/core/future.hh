@@ -1046,6 +1046,13 @@ public:
 #endif
     }
 
+    template <typename Func, typename Result = futurize_t<std::result_of_t<Func(T&&...)>>>
+    GCC6_CONCEPT( requires ::seastar::CanApply<Func, T...> )
+    Result
+    operator>>(Func&& func) noexcept {
+            return this->then(func);
+    }
+
 private:
 
     template <typename Func, typename Result = futurize_t<std::result_of_t<Func(T&&...)>>>
